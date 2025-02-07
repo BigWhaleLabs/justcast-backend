@@ -108,7 +108,7 @@ export default async function publishCast({
 }: { data: CastAddBody, fid: number, signerPrivateKey?: `0x${string}`, mnemonic?: string }) {
   const signer = new NobleEd25519Signer(await getSigner({ signerPrivateKey, fid, mnemonic }))
   console.log('Got signer, publishing cast')
-  return submitMessage(
+  await submitMessage(
     makeCastAdd(
       data,
       {
@@ -118,4 +118,7 @@ export default async function publishCast({
       signer
     )
   )
+  return {
+    signerPrivateKey: signer,
+  }
 }

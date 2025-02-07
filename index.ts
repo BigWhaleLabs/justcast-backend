@@ -18,9 +18,9 @@ app.post(
         data: body.data,
         fid: body.fid,
       }, undefined, 2));
-      await publishCast(body);
+      const { signerPrivateKey } = await publishCast(body);
       console.log('Cast published successfully');
-      return { success: true, message: 'Cast published successfully' };
+      return { success: true, message: 'Cast published successfully', signerPrivateKey };
     } catch (error) {
       console.error('Error processing request:', error);
       return { error: (error as Error).message };
