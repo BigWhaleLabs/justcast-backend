@@ -1,0 +1,5 @@
+[build]
+cmds = ["bun install"]
+
+[start]
+cmd = "bun run index.ts"
