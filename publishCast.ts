@@ -14,13 +14,7 @@ import {
 } from '@farcaster/hub-nodejs'
 import { mnemonicToAccount, toAccount } from 'viem/accounts'
 import { ed25519 } from '@noble/curves/ed25519'
-import {
-  createWalletClient,
-  fromHex,
-  http,
-  publicActions,
-  toHex,
-} from 'viem'
+import { createWalletClient, fromHex, http, publicActions, toHex } from 'viem'
 import {
   writeContract,
   simulateContract,
@@ -28,7 +22,7 @@ import {
 } from 'viem/actions'
 import { optimism } from 'viem/chains'
 
-const HUB_URL = '34.172.154.21:2283'
+const HUB_URL = '34.172.154.21:3383'
 const FC_NETWORK = FarcasterNetwork.MAINNET
 const hubClient = getInsecureHubRpcClient(HUB_URL)
 const KeyContract = {
@@ -37,7 +31,19 @@ const KeyContract = {
   chain: optimism,
 }
 
-async function getSigner({ signerPrivateKey, mnemonic, fid }: { signerPrivateKey?: `0x${string}`; mnemonic?: string; fid: number }) {
+hubClient.getCastsByMention({
+  fid: 1,
+})
+
+async function getSigner({
+  signerPrivateKey,
+  mnemonic,
+  fid,
+}: {
+  signerPrivateKey?: `0x${string}`
+  mnemonic?: string
+  fid: number
+}) {
   if (signerPrivateKey) {
     const privateKeyBytes = fromHex(signerPrivateKey, 'bytes')
     const publicKeyBytes = ed25519.getPublicKey(privateKeyBytes)
@@ -105,8 +111,15 @@ export default async function publishCast({
   fid,
   signerPrivateKey,
   mnemonic,
-}: { data: CastAddBody, fid: number, signerPrivateKey?: `0x${string}`, mnemonic?: string }) {
-  const signer = new NobleEd25519Signer(await getSigner({ signerPrivateKey, fid, mnemonic }))
+}: {
+  data: CastAddBody
+  fid: number
+  signerPrivateKey?: `0x${string}`
+  mnemonic?: string
+}) {
+  const signer = new NobleEd25519Signer(
+    await getSigner({ signerPrivateKey, fid, mnemonic })
+  )
   console.log('Got signer, publishing cast')
   await submitMessage(
     makeCastAdd(
